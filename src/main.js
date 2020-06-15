@@ -2,9 +2,9 @@
 const imageUpload = document.getElementById('imageUpload');
 
 Promise.all([
-  faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
-  faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-  faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
+  faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/models'),
+  faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/models'),
+  faceapi.nets.ssdMobilenetv1.loadFromUri('https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/models')
 ]).then(init)
 
 async function init() {
