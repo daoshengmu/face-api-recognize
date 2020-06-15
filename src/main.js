@@ -1,5 +1,8 @@
 
-const imageUpload = document.getElementById('imageUpload');
+let status = document.getElementById('status');
+status.innerHTML = "Loading models...";
+let imageUpload = document.getElementById('imageUpload');
+imageUpload.disabled = true;
 
 Promise.all([
   faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/models'),
@@ -8,23 +11,27 @@ Promise.all([
 ]).then(init)
 
 async function init() {
-  const container = document.createElement('div');
-  container.style.position = 'relative';
-  document.body.append(container);
+  const container = document.getElementById('container');
   const labeledFaceDescriptors = await loadLabeledImages();
   const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
-  document.body.append('Loaded');
+  status.innerHTML = "Loaded";
+  imageUpload.disabled = false;
 
   let image;
   let canvas;
   imageUpload.addEventListener('change', async () => {
     if (canvas) image.remove();
-    if (canvas) image.remove();
+    if (canvas) canvas.remove();
 
+    status.innerHTML = "";  
     image = await faceapi.bufferToImage(imageUpload.files[0]);
+    image.className = 'resize_fit_center';
     container.append(image);
+
     canvas = faceapi.createCanvasFromMedia(image);
+    canvas.className = 'canvas_fit_center';
     container.append(canvas);
+
     const displaySize = {width: image.width, height: image.height};
     faceapi.matchDimensions(canvas, displaySize);
     const detections = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceDescriptors();
