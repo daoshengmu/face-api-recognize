@@ -11,9 +11,9 @@ async function init() {
   const container = document.createElement('div');
   container.style.position = 'relative';
   document.body.append(container);
-  document.body.append('Loaded');
   const labeledFaceDescriptors = await loadLabeledImages();
   const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+  document.body.append('Loaded');
 
   let image;
   let canvas;
@@ -29,7 +29,7 @@ async function init() {
     faceapi.matchDimensions(canvas, displaySize);
     const detections = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceDescriptors();
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
-    const result = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor));
+    const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor));
 
     results.forEach((result, i) => {
       const box = resizedDetections[i].detection.box
@@ -48,8 +48,10 @@ function loadLabeledImages() {
       for (let i = 1; i <= 4; ++i) {
         const img = await faceapi.fetchImage(`https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/labeled_images/${label}/${i}.jpg`)
         const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-        descriptions.push(detections.descriptor)
+        descriptions.push(detections.descriptor);
       }
+
+      return new faceapi.LabeledFaceDescriptors(label, descriptions)
     })
   )
 }
