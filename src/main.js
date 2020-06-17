@@ -47,15 +47,19 @@ async function init() {
 }
 
 function loadLabeledImages() {
-  const labels = ['curry', 'klay'];
+  const labels = ['Andrew Wiggins', 'Draymond Green', 'Klay Thompson', 'Stephen Curry'];
 
   return Promise.all(
     labels.map(async label => {
       const descriptions = [];
       for (let i = 1; i <= 4; ++i) {
-        const img = await faceapi.fetchImage(`https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/labeled_images/${label}/${i}.jpg`)
+        const img = await faceapi.fetchImage(`https://raw.githubusercontent.com/daoshengmu/face-api-recognize/master/labeled_images/${label}/${i}.jpg`);
         const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-        descriptions.push(detections.descriptor);
+        if (detections != null && detections.hasOwnProperty('descriptor')) {
+          descriptions.push(detections.descriptor);
+        } else {
+          console.log("Can't find descriptor from a pic.");
+        }
       }
 
       return new faceapi.LabeledFaceDescriptors(label, descriptions)
